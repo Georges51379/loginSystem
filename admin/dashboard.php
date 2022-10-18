@@ -1,11 +1,11 @@
 <?php session_start();
 require "db/connection.php";
 
-if(strlen($_SESSION['email']) == 0 ){
+if(strlen($_SESSION['ad_email']) == 0 ){
   header('location: index.php');
 }
 else{
-$email = $_SESSION['email'];
+$email = $_SESSION['ad_email'];
 $query = mysqli_query($con,"SELECT * FROM admin WHERE email = '$email'");
 $rows = mysqli_fetch_array($query);
 }
@@ -36,7 +36,7 @@ $rows = mysqli_fetch_array($query);
 <center>
   <div class="tables">
 <?php
-$query = mysqli_query($con,"SELECT * FROM user$");
+$query = mysqli_query($con,"SELECT * FROM users");
 $rw = mysqli_num_rows($query);
 $numbUsers = $rw;
 ?>
@@ -54,7 +54,7 @@ $numbUsers = $rw;
       </tbody>
     </table>
 <?php
-$query = mysqli_query($con,"SELECT * FROM user$ Where userStatus = 0");
+$query = mysqli_query($con,"SELECT * FROM users Where userStatus = 'Inactive'");
 $row = mysqli_num_rows($query);
 $inactiveUsers = $row;
 ?>
@@ -72,7 +72,7 @@ $inactiveUsers = $row;
       </tbody>
     </table>
 <?php
-$query = mysqli_query($con,"SELECT * FROM user$ Where userStatus = 1");
+$query = mysqli_query($con,"SELECT * FROM users Where userStatus = 'Active'");
 $row = mysqli_num_rows($query);
 $activeUsers = $row;
  ?>

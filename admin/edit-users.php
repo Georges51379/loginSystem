@@ -3,16 +3,15 @@ session_start();
 include('db/connection.php');
 error_reporting(0);
 
-if(strlen($_SESSION['email']) == 0 ){
+if(strlen($_SESSION['ad_email']) == 0 ){
   header('location: index.php');
 }else{
-  $email = $_SESSION['email'];
+  $email = $_SESSION['ad_email'];
   $query = mysqli_query($con,"SELECT * FROM admin WHERE email = '$email'");
   $rw = mysqli_fetch_array($query);
 
   date_default_timezone_set('Asia/Beirut');// change according timezone
   $currentTime = date( 'd-m-Y h:i:s A', time () );
-  $id=intval($_GET['id']);// USERS id
 
   if(isset($_POST['edit'])){
     $name =$_POST['name'];
@@ -21,8 +20,9 @@ if(strlen($_SESSION['email']) == 0 ){
     $status = $_POST['status'];
     $userStatus = $_POST['userStatus'];
 
-    $updateQuery = mysqli_query($con,"UPDATE user$ SET name='$name', email='$email', password='$password', status='$status',
-       userStatus='$userStatus', updateDate='$currentTime' WHERE id='$id'");
+
+    $updateQuery = mysqli_query($con,"UPDATE users SET name='$name', email='$email', password='$password', status='$status',
+       userStatus='$userStatus', updateDate='$currentTime' WHERE token = '".$_GET['userToken']."' ");
        header('location:users.php');
   }
 }
@@ -56,7 +56,7 @@ if(strlen($_SESSION['email']) == 0 ){
       </nav>
   <br><br><br>
 <?php
-$query = mysqli_query($con,"SELECT * FROM user$ where id = '$id'");
+$query = mysqli_query($con,"SELECT * FROM users WHERE token = '".$_GET['userToken']."'");
 $cnt = 1;
 while($rws = mysqli_fetch_array($query)){ ?>
     <center>
@@ -82,8 +82,12 @@ while($rws = mysqli_fetch_array($query)){ ?>
         </div>
 
         <div class="form-group">
-          <label for="" class="form-label">user deactivation status</label>
-          <input type="number" name="userStatus" class="form-control" placeholder="enter user deactivation" value="<?php echo htmlentities($rws['userStatus']); ?>">
+          <label for="" class="form-label">user Status</label>
+          <select type="text" name="userStatus" class="adminform_input" required>
+            <option value="-<?php echo htmlentities($rws['userStatus']); ?>"><?php echo htmlentities($rws['userStatus']); ?></option>
+            <option value="Active">Active</option>
+            <option value="Inactive">Inactive</option>
+          </select>
         </div>
 
         <button type="submit" name="edit" class="btn btn-primary">Submit</button>

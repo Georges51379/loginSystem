@@ -3,10 +3,10 @@ session_start();
 include('db/connection.php');
 error_reporting(0);
 
-if(strlen($_SESSION['email']) == 0 ){
+if(strlen($_SESSION['ad_email']) == 0 ){
   header('location: index.php');
 }else{
-  $email = $_SESSION['email'];
+  $email = $_SESSION['ad_email'];
   $query = mysqli_query($con,"SELECT * FROM admin WHERE email = '$email'");
   $rw = mysqli_fetch_array($query);
 
@@ -20,9 +20,11 @@ if(strlen($_SESSION['email']) == 0 ){
     $status =$_POST['status'];
     $userStatus =$_POST['userStatus'];
     $hashedpwd = password_hash($password, PASSWORD_BCRYPT);
+    $hashedToken = random_bytes(20);
+    $_SESSION['token'] = bin2hex($hashedToken);
 
-    $insertQuery = mysqli_query($con,"INSERT INTO user$ (name, email, password, status, userStatus)
-                    VALUES ('$name', '$email', '$hashedpwd', '$status', '$userStatus')");
+    $insertQuery = mysqli_query($con,"INSERT INTO users (token, name, email, password, code , status, userStatus)
+                    VALUES ('".$_SESSION['token']."' ,'$name', '$email', '$hashedpwd', '0', '$status', '$userStatus')");
       header('location: users.php');
   }
 }
@@ -78,7 +80,11 @@ if(strlen($_SESSION['email']) == 0 ){
 
       <div class="form-group">
         <label for="" class="form-label">user Status</label>
-        <input type="text" class="form-control" name="userStatus" placeholder="enter user activation status">
+        <select type="text" name="userStatus" class="adminform_input" required>
+          <option value="--Select An Option--">-Select An Option--</option>
+          <option value="Active">Active</option>
+          <option value="Inactive">Inactive</option>
+        </select>
       </div>
 
       <button type="submit" name="add" class="btn btn-primary">add</button>

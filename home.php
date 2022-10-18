@@ -3,7 +3,7 @@
 $email = $_SESSION['email'];
 $password = $_SESSION['password'];
 if($email != false && $password != false){
-    $query = mysqli_query($con,"SELECT * FROM user$ WHERE email = '$email'");
+    $query = mysqli_query($con,"SELECT * FROM users WHERE email = '$email'");
     if($query){
         $rows = mysqli_fetch_array($query);
         $status = $rows['status'];

@@ -1,14 +1,14 @@
 <?php require_once "dataProcessing.php";
-if(strlen($_SESSION['email']) == 0){
+if(strlen($_SESSION['ad_email']) == 0){
   header('location: index.php');
 }else{
-  $email = $_SESSION['email'];
+  $email = $_SESSION['ad_email'];
   $query = mysqli_query($con,"SELECT * FROM admin WHERE email = '$email'");
   $rw = mysqli_fetch_array($query);
 }
 
 if(isset($_GET['del'])){
-	mysqli_query($con,"update user$ set userStatus=0 where id = '".$_GET['id']."'");
+	mysqli_query($con,"UPDATE users SET userStatus='Inactive' WHERE token = '".$_GET['userToken']."'");
     $_SESSION['delmsg']="user deleted !!";
 }
 ?>
@@ -48,41 +48,33 @@ if(isset($_GET['del'])){
                 <th>#</th>
                 <th>name</th>
                 <th>email</th>
-                <th>password</th>
                 <th>status</th>
                 <th>user status</th>
-                <th>registration Date</th>
                 <th>update Date</th>
                 <th>action</th>
             </tr>
         </thead>
-<?php
-$query = mysqli_query($con,"SELECT * FROM user$");
-$count = 1;
-while($row = mysqli_fetch_array($query)){
-?>
         <tbody>
-            <tr>
-                <td><?php echo $count; ?></td>
-                <td><?php echo $row['name']; ?></td>
-                <td><?php echo $row['email']; ?></td>
-                <td><?php echo $row['password']; ?></td>
-                <td><?php echo $row['status']; ?></td>
-                <td><?php echo $row['userStatus']; ?></td>
-                <td><?php echo $row['registrationDate']; ?></td>
-                <td><?php echo $row['updateDate']; ?></td>
-                <td>
-                  <a href="edit-users.php?id=<?php echo htmlentities($row['id'])?>"><i class="fa fa-pencil"></i></a>
-<?php if($row['userStatus'] == 1){
+<?php
+ $query=mysqli_query($con,"SELECT * FROM users");
+ $cnt=1;
+ while($row=mysqli_fetch_array($query)){
 ?>
-                  <a href="users.php?id=<?php echo htmlentities($row['id'])?>&del=delete" onclick="return confirm('Are you sure you want to delete this user?')"><i class="fa fa-trash"></i></a>
-<?php } else {
-  echo '<i class="fa fa-ban"></i>';
-} ?>
-                </td>
-            </tr>
-          </tbody>
-<?php $count ++; } ?>
+
+          <tr>
+            <td><?php echo htmlentities($cnt);?></td>
+            <td><?php echo htmlentities($row['name']);?></td>
+            <td><?php echo htmlentities($row['email']);?></td>
+            <td> <?php echo htmlentities($row['status']);?></td>
+            <td> <?php echo htmlentities($row['userStatus']);?></td>
+            <td> <?php echo htmlentities($row['updateDate']);?></td>
+            <td>
+            <a href="edit-users.php?userToken=<?php echo $row['token']?>" ><i class="fa fa-plus"></i></a>
+            <a href="users.php?userToken=<?php echo $row['token']?>&del=delete" onClick="return confirm('Are you sure you want to delete?')"><i class="fa fa-times"></i></a>
+            </td>
+          </tr>
+          <?php $cnt=$cnt+1; } ?>
+        </tbody>
     </table>
 
     <!--DATATABLES SECTION JS-->

@@ -13,7 +13,7 @@ if (isset($_POST['signup'])){
   if( $password !== $cpassword){
     $errors['password'] = "Password do not match!!";
   }
-  $query = mysqli_query($con,"SELECT * FROM user$ WHERE email = '$email'");
+  $query = mysqli_query($con,"SELECT * FROM users WHERE email = '$email'");
   $row = mysqli_num_rows($query);
   if($row > 0){
     $errors['email'] = "Email already Exists! Login in instead or try another Email";
@@ -22,9 +22,11 @@ if (isset($_POST['signup'])){
     $hashedpwd = password_hash($password, PASSWORD_BCRYPT);
     $code = rand(99999999, 11111111);
     $status = "notverified";
-    $userStatus = 1;
-    $insert_query = mysqli_query($con,"INSERT INTO user$ (name, email, password, code, status, userStatus)
-                    values('$name', '$email', '$hashedpwd', '$code', '$status', 1)");
+    $token = random_bytes(20);
+    $hashedToken = bin2hex($token);
+
+    $insert_query = mysqli_query($con,"INSERT INTO users (token, name, email, password, code, status, userStatus)
+                    VALUES('$hashedToken', '$name', '$email', '$hashedpwd', '$code', '$status', 'Active')");
     if($insert_query){
       $subject = "Email Verification Code";
       $message = "Your verification code is $code";
@@ -48,7 +50,7 @@ if (isset($_POST['signup'])){
   if(isset($_POST['check-code'])){
     $_SESSION['info'] = "";
     $otp_code = $_POST['otp'];
-    $query_check_code = mysqli_query($con, "SELECT * FROM user$ WHERE code = '$otp_code'");
+    $query_check_code = mysqli_query($con, "SELECT * FROM users WHERE code = '$otp_code'");
     $rows = mysqli_num_rows($query_check_code);
     if($rows > 0 ){
       $rw = mysqli_fetch_array($query_check_code);
@@ -56,7 +58,7 @@ if (isset($_POST['signup'])){
       $email = $rw['email'];
       $code = 0;
       $status = 'verified';
-      $updated_check_code_query = mysqli_query($con, "UPDATE user$ SET code = '$code', status = '$status' WHERE code = '$fetch_code'");
+      $updated_check_code_query = mysqli_query($con, "UPDATE users SET code = '$code', status = '$status' WHERE code = '$fetch_code'");
       if($updated_check_code_query){
         $_SESSION['name'] = $name;
         $_SESSION['email'] = $email;
@@ -73,7 +75,7 @@ if (isset($_POST['signup'])){
   if(isset($_POST['login'])){
     $email = $_POST['email'];
     $password = $_POST['password'];
-    $query = mysqli_query($con, "SELECT * FROM user$ WHERE email = '$email' AND userStatus = 1 ");
+    $query = mysqli_query($con, "SELECT * FROM users WHERE email = '$email' AND userStatus = 'Active' ");
     $row = mysqli_num_rows($query);
     if($row > 0){
       $rw = mysqli_fetch_array($query);
@@ -86,8 +88,7 @@ if (isset($_POST['signup'])){
             $_SESSION['last_login_timestamp'] = time();
             $_SESSION['password'] = $password;
             $uip=$_SERVER['REMOTE_ADDR'];
-            $stat=1;
-            $userLogQuery=mysqli_query($con,"INSERT INTO userlog(userEmail,userIp,status) VALUES('".$_SESSION['email']."','$uip','$stat')");
+            $userLogQuery=mysqli_query($con,"INSERT INTO userlog(userEmail,userIp,status) VALUES('".$_SESSION['email']."','$uip','Active')");
               header('location: home.php');
             }else{
                 $info = "It looks like you haven't verified your email - $email";
@@ -106,11 +107,11 @@ if (isset($_POST['signup'])){
 //FORGOTPWD (FORGOTPWD.PHP)
 if(isset($_POST['forgotpwd'])){
   $email = $_POST['email'];
-  $query = mysqli_query($con, "SELECT * FROM user$ WHERE email = '$email'");
+  $query = mysqli_query($con, "SELECT * FROM users WHERE email = '$email'");
   $rows = mysqli_num_rows($query);
   if($rows > 0){
     $code = rand(99999999, 11111111);
-    $update_code_query = mysqli_query($con, "UPDATE user$ SET code = '$code' WHERE email = '$email'");
+    $update_code_query = mysqli_query($con, "UPDATE users SET code = '$code' WHERE email = '$email'");
     if($update_code_query){
       $subject = "Password Reset Code";
       $message = "Your password reset code is $code";
@@ -135,7 +136,7 @@ if(isset($_POST['forgotpwd'])){
 if(isset($_POST['check-reset-otp'])){
   $_SESSION['info'] = "";
   $otp_code = $_POST['otp'];
-  $query = mysqli_query($con, "SELECT * FROM user$ WHERE code = '$otp_code'");
+  $query = mysqli_query($con, "SELECT * FROM users WHERE code = '$otp_code'");
   $rows = mysqli_num_rows($query);
   if($rows > 0){
     $rw = mysqli_fetch_array($query);
@@ -161,7 +162,7 @@ if(isset($_POST['change-password'])){
       $code = 0;
       $email = $_SESSION['email']; //getting this email using session
       $hashedpwd = password_hash($password, PASSWORD_BCRYPT);
-      $update_query = mysqli_query($con, "UPDATE user$ SET code = '$code', password = '$hashedpwd' WHERE email = '$email'");
+      $update_query = mysqli_query($con, "UPDATE users SET code = '$code', password = '$hashedpwd' WHERE email = '$email'");
       if($update_query){
         $info = "Password Changed! You can now login using your new Password";
         $_SESSION['info'] = $info;

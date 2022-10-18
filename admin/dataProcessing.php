@@ -19,7 +19,7 @@ $errors = array();
       $updated_check_code_query = mysqli_query($con, "UPDATE admin SET code = '$code', status = '$status' WHERE code = '$fetch_code'");
       if($updated_check_code_query){
         $_SESSION['name'] = $name;
-        $_SESSION['email'] = $email;
+        $_SESSION['ad_email'] = $email;
         header('location: dashboard.php');
         exit();
       }else{
@@ -33,16 +33,16 @@ $errors = array();
   if(isset($_POST['login'])){
     $email = $_POST['email'];
     $password = $_POST['password'];
-    $query = mysqli_query($con, "SELECT * FROM admin WHERE email = '$email' AND adminStatus = 1");
+    $query = mysqli_query($con, "SELECT * FROM admin WHERE email = '$email' AND adminStatus = 'Active'");
     $row = mysqli_num_rows($query);
     if($row > 0){
       $rw = mysqli_fetch_array($query);
       $fetched_pwd = $rw['password'];
       if(password_verify($password, $fetched_pwd)){
-          $_SESSION['email'] = $email;
+          $_SESSION['ad_email'] = $email;
           $status = $rw['status'];
           if($status == 'verified'){
-            $_SESSION['email'] = $email;
+            $_SESSION['ad_email'] = $email;
             $_SESSION['password'] = $password;
               header('location: dashboard.php');
             }else{
@@ -72,7 +72,7 @@ if(isset($_POST['forgotpwd'])){
       if(mail($email, $subject, $message, $sender)){
           $info = "We've sent a passwrod reset otp to your email - $email";
           $_SESSION['info'] = $info;
-          $_SESSION['email'] = $email;
+          $_SESSION['ad_email'] = $email;
           header('location: reset-code.php');
           exit();
         }else{
@@ -94,7 +94,7 @@ if(isset($_POST['check-reset-otp'])){
   if($rows > 0){
     $rw = mysqli_fetch_array($query);
     $email = $rw['email'];
-    $_SESSION['email'] = $email;
+    $_SESSION['ad_email'] = $email;
     $info = "Please enter a password that you do not use on any other accounts";
     $_SESSION['info'] = $info;
     header('location: new-password.php');
