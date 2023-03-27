@@ -3,7 +3,7 @@ require_once("../db/connection.php");
 if(!empty($_POST["name"])) {
 	$name= $_POST["name"];
 
-		$result =mysqli_query($con,"SELECT name FROM  users WHERE  name='$name'");
+		$result =mysqli_query($con,"SELECT username FROM  users WHERE  username='$name'");
 		$count=mysqli_num_rows($result);
 if($count>0)
 {

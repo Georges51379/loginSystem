@@ -1,7 +1,7 @@
 <?php require_once "dataProcessing.php"; ?>
 <?php
-$email = $_SESSION['email'];
-$password = $_SESSION['password'];
+$email = $_SESSION["loginSystem-email"];
+$password = $_SESSION['loginSystem-password'];
 if($email != false && $password != false){
     $query = mysqli_query($con,"SELECT * FROM users WHERE email = '$email'");
     if($query){
@@ -20,7 +20,7 @@ if($email != false && $password != false){
     header('Location: index.php');
 }
 
-if(isset($_SESSION['email'])){
+if(isset($_SESSION["loginSystem-email"])){
   if((time() - $_SESSION['last_login_timestamp']) > 60){
     header('location:logout-user.php');
   }
@@ -33,7 +33,7 @@ if(isset($_SESSION['email'])){
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title><?php echo $rows['name'] ?> | Home</title>
+    <title><?php echo $rows['username'] ?> | Home</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="shortcut icon" href="img/icons/logo.png">
     <style>
@@ -75,7 +75,7 @@ if(isset($_SESSION['email'])){
     <a class="navbar-brand" href="#">brand</a>
     <button type="button" class="btn btn-light"><a href="logout-user.php">Logout</a></button>
     </nav>
-    <h1>welcome <?php echo $rows['name'] ?></h1>
+    <h1>welcome <?php echo $rows['username'] ?></h1>
 
 </body>
 </html>

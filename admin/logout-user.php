@@ -1,6 +1,6 @@
 <?php
 session_start();
-session_unset();
-session_destroy();
+include("db/connection.php");
+$_SESSION["ad-email"]=="";
 header('location: index.php');
 ?>

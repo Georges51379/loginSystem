@@ -1,6 +1,6 @@
 <?php require_once "dataProcessing.php"; ?>
 <?php
-$email = $_SESSION['email'];
+$email = $_SESSION["loginSystem-email"];
 if($email == false){
   header('Location: index.php');
 }

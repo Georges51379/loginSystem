@@ -8,14 +8,14 @@ if(strlen($_SESSION['ad_email']) == 0){
 }
 
 if(isset($_GET['del'])){
-	mysqli_query($con,"UPDATE users SET userStatus='Inactive' WHERE token = '".$_GET['userToken']."'");
+	mysqli_query($con,"UPDATE users SET userStatus='Inactive' WHERE userToken = '".$_GET['userToken']."'");
     $_SESSION['delmsg']="user deleted !!";
 }
 ?>
 <html>
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin&nbsp<?php echo htmlentities($rw['name']); ?> | Users</title>
+    <title>Admin&nbsp<?php echo htmlentities($rw['adminName']); ?> | Users</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css" rel="stylesheet">
@@ -30,7 +30,7 @@ if(isset($_GET['del'])){
   <body>
     <nav>
       <h1>login system&emsp;</h1>
-      <h3>signed in as &nbsp<br><?php echo htmlentities($rw['name']); ?></h3>
+      <h3>signed in as &nbsp<br><?php echo htmlentities($rw['adminName']); ?></h3>
       <div class="break">.</div>&emsp;
       <ul>
         <li class="list"><a href="dashboard.php" class="list-links">dashboard&nbsp<i class="fa fa-dashboard"></i></a></li>
@@ -63,9 +63,9 @@ if(isset($_GET['del'])){
 
           <tr>
             <td><?php echo htmlentities($cnt);?></td>
-            <td><?php echo htmlentities($row['name']);?></td>
+            <td><?php echo htmlentities($row['username']);?></td>
             <td><?php echo htmlentities($row['email']);?></td>
-            <td> <?php echo htmlentities($row['status']);?></td>
+            <td> <?php echo htmlentities($row['userVerified']);?></td>
             <td> <?php echo htmlentities($row['userStatus']);?></td>
             <td> <?php echo htmlentities($row['updateDate']);?></td>
             <td>
